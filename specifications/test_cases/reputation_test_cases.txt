@@ -39,7 +39,7 @@ Scenario: Getting the history of reputation changes for an author
     When I publish a reputation change event for the author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe"
     Then subscribers to the reputation change event for the author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" should receive a notification
     
-    -------Negative--------------
+   // -------Negative--------------
     
    Scenario: Registering an existing author
     Given author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" is already registered in the system
