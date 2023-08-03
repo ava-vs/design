@@ -1,0 +1,46 @@
+Canister: ReputationCanister
+
+Description: Responsible for accounting and representing the author's reputation.
+Note: The author's unique id is the principal id of the user with which the author was authorized through Internet Identity.
+Public methods:
+
+    registerAuthor
+        Description: Register a new author in the system.
+        Input parameters:
+            authorId: Text: The unique identifier of the author.
+            initialReputation: Float: Initial reputation balance (0).
+        Returns: Successful execution or error.
+
+updateReputation
+        Description: Updates the author's reputation balance.
+        Input parameters:
+            AuthorId: Text: The unique identifier of the author.
+            reputationDelta: Bool: Change reputation balance by +1 or -1 (true =+1; false = -1).
+        Note: Creates a reputation change event and publishes it 
+        Returns: Updated reputation balance or error.
+
+    getReputation
+        Description: View the author's current reputation balance.
+        Input parameters:
+            AuthorId: Text: The unique identifier of the author.
+        Returns: Author's reputation balance or error.
+
+    subscribeReputationChanges
+        Description: Subscribe to changes in the author's reputation.
+        Input parameters:
+            AuthorId: Text: The unique identifier of the author.
+            callbackCanister: CanisterId: The identifier of the canister to which change notifications will be sent.
+        Returns: Successful execution or error.
+
+    getReputationHistory
+        Description: Get the history of changes to the author's reputation balance.
+        Input parameters:
+            AuthorId: Text: The unique identifier of the author.
+        Returns: List of reputation changes (time, balance change) or error.
+        
+    publishReputationUpdateEvent
+    	Description: Publish the author reputation change event.
+        Input parameters:
+            AuthorId: Text: The unique identifier of the author.
+            callbackCanister: CanisterId: The identifier of the canister to which change notifications will be sent.            
+        Returns: Successful execution or error.
