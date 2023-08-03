@@ -1,0 +1,77 @@
+Feature: Author reputation management in ReputationCanister
+
+  Background:
+    Given system has a ReputationCanister canister
+
+  Scenario: New author registration
+    Given author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" is not registered in the system
+    When I register an author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" and initial reputation balance 0
+    Then an author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" and reputation balance 0 must be registered in the system.
+
+  Scenario: Increasing the author's reputation
+    Given author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" has reputation balance 5
+    When I increase the reputation of the author with ID "12345"
+    Then the reputation balance of the author with ID "12345" should become 6.
+
+  Scenario: Decreasing the reputation of an author
+    Given author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" has a reputation balance of 5
+    When I reduce the reputation of the author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe"
+    Then the reputation balance of the author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" should become 4.
+
+  Scenario: View author's reputation balance
+    Given author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" has a reputation balance of 5
+    When I request the reputation balance of the author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe"
+    Then I should get a reputation balance of 5 for the author with ID "12o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe345".
+
+  Scenario: Subscription for reputation changes
+    Given author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" has a reputation balance of 5
+    And I am subscribed to reputation changes for author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe"
+    When the reputation of the author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" changes
+    Then I should receive a notification about reputation changes for the author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe".
+
+Scenario: Getting the history of reputation changes for an author
+    Given author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" had the following reputation changes: +1, -1, +1.
+    When I request a reputation history for the author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe"
+    Then I should see the following reputation changes for the author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe": +1, -1, +1
+
+  Scenario: Publishing a reputation change event
+    Given author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" has a reputation balance of 5
+    When I publish a reputation change event for the author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe"
+    Then subscribers to the reputation change event for the author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" should receive a notification
+    
+    -------Negative--------------
+    
+   Scenario: Registering an existing author
+    Given author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" is already registered in the system
+    When I try to register an author with ID "o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe"
+    Then I should get the error "Author with ID 'o4f3h-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe' is already registered".
+
+  Scenario: Increasing the reputation of a non-existent author
+    Given author with ID "aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" is not registered in the system
+    When I try to increase the reputation of the author with ID "1234aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe6"
+    Then I should get the error "Author with ID '123aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe46' not found".
+
+  Scenario: Decreasing the reputation of a non-existent author
+    Given author with ID "aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" is not registered in the system
+    When I try to reduce the reputation of an author with ID "aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe"
+    Then I should get the error "Author with ID '12aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe346' not found".
+
+   Scenario: View reputation of a non-existent author
+    Given author with ID "aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" is not registered in the system
+    When I try to get the reputation balance of the author with ID "aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe"
+    Then I should get the error "Author with ID 'aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe' not found".
+
+  Scenario: Subscription for reputation changes for a non-existent author
+    Given author with ID "aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" is not registered in the system
+    When I try to subscribe to reputation changes for author with ID "aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe"
+    Then I should get the error "Author with ID 'aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe' not found".
+
+  Scenario: Getting reputation history of a non-existent author
+    Given author with ID "aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" is not registered in the system
+    When I try to get reputation history of author with ID "123aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe46"
+    Then I should get the error "Author with ID 'aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe' not found".
+
+  Scenario: Publishing a reputation change event for a non-existent author
+    Given author with ID "aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe" is not registered in the system
+    When I try to publish a reputation change event for an author with ID "aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe"
+    Then I should get the error "Author with ID 'aaaaa-cbpnm-4hnl7-pejut-c4vii-a5u5u-bk2va-e72lb-edvgw-z4wuq-5qe' not found".
